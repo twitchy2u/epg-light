@@ -1,0 +1,39 @@
+name: Ungz
+
+on:
+  schedule:
+    - cron: '10 */6 * * *'  # Runs every 6 hours
+  workflow_dispatch:      # Allows you to run it manually
+
+permissions:
+  contents: write
+
+jobs:
+  update-epg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Uncompress .gz file
+        run: |
+          cd .epg-light/epgs for file in *.gz; do gunzip -k "light-epg.xml.gz"
+
+      - name: Commit and Force Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # This ensures there is ALWAYS a change to commit
+          date -u > last_run.txt
+          
+          # Add the epg and the heartbeat file
+          git add epgs/*.gz last_run.txt
+          
+          # Commit using amend to keep the repo history from growing
+          git commit --amend -m "Fresh EPG Update: $(date -u)" || git commit -m "Fresh EPG Update: $(date -u)"
+          
+          # Force push to overwrite the old file with the new one
+          git push --force
