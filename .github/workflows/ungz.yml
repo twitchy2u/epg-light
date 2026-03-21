@@ -19,7 +19,7 @@ jobs:
 
       - name: Uncompress .gz file
         run: |
-          cd .epg-light/epgs for file in *.gz; do gunzip -k "light-epg.xml.gz"
+          cd .epgs for file in *.gz; do gunzip -k "light-epg.xml.gz"
 
       - name: Commit and Force Push
         run: |
