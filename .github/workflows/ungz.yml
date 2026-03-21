@@ -18,8 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Uncompress .gz file
-        run: |
-          cd .epgs for file in *.gz; gunzip -k "light-epg.xml.gz"
+        run: gunzip -k .epg-light/epgs/light-epg.xml.gz
 
       - name: Commit and Force Push
         run: |
